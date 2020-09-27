@@ -17,13 +17,20 @@ void main() {
 abstract class CellPainter {
   factory CellPainter.fromCell(Cell cell) {
     switch (cell.cellState) {
-      case CellState.empty: return const ColorCellPainter(Colors.white);
-      case CellState.wall: return const ColorCellPainter(Colors.black);
-      case CellState.goal: return const ColorCellPainter(Colors.green);
-      case CellState.marked: return const ColorCellPainter(Colors.yellow);
-      case CellState.start: return const ColorCellPainter(Colors.teal);
-      case CellState.walked: return ColorCellPainter(Colors.grey.shade100);
-      case CellState.walked2: return ColorCellPainter(Colors.grey.shade500);
+      case CellState.empty:
+        return const ColorCellPainter(Colors.white);
+      case CellState.wall:
+        return const ColorCellPainter(Colors.black);
+      case CellState.goal:
+        return const ColorCellPainter(Colors.green);
+      case CellState.marked:
+        return const ColorCellPainter(Colors.yellow);
+      case CellState.start:
+        return const ColorCellPainter(Colors.teal);
+      case CellState.walked:
+        return ColorCellPainter(Colors.grey.shade200);
+      case CellState.walked2:
+        return ColorCellPainter(Colors.grey.shade500);
     }
     throw UnsupportedError('cannot handle $cell');
   }
@@ -88,7 +95,8 @@ class BoardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (int y = 0; y < height; y += 1) {
       for (int x = 0; x < width; x += 1) {
-        cells[x + y * width].paint(canvas, Rect.fromLTWH(x.toDouble(), y.toDouble(), 1.0, 1.0));
+        cells[x + y * width]
+            .paint(canvas, Rect.fromLTWH(x.toDouble(), y.toDouble(), 1.0, 1.0));
       }
     }
     canvas.drawCircle(
@@ -100,9 +108,9 @@ class BoardPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(BoardPainter oldDelegate) {
-    return width != oldDelegate.width
-        || cells != oldDelegate.cells
-        || antOffset != oldDelegate.antOffset;
+    return width != oldDelegate.width ||
+        cells != oldDelegate.cells ||
+        antOffset != oldDelegate.antOffset;
   }
 
   static BoardPainter lerp(BoardPainter a, BoardPainter b, double t) {
@@ -119,15 +127,17 @@ class BoardPainter extends CustomPainter {
     assert(a.cells.length == b.cells.length);
     return BoardPainter._(
       b.width,
-      List<CellPainter>.generate(a.cells.length, (int index) => CellPainter.lerp(a.cells[index], b.cells[index], t)),
+      List<CellPainter>.generate(a.cells.length,
+          (int index) => CellPainter.lerp(a.cells[index], b.cells[index], t)),
       Offset.lerp(a.antOffset, b.antOffset, t),
     );
   }
 }
 
 class BoardPainterTween extends Tween<BoardPainter> {
-  BoardPainterTween({ BoardPainter begin, BoardPainter end }) : super(begin: begin, end: end);
-  
+  BoardPainterTween({BoardPainter begin, BoardPainter end})
+      : super(begin: begin, end: end);
+
   BoardPainter lerp(double t) {
     return BoardPainter.lerp(begin, end, t);
   }
@@ -225,14 +235,16 @@ class AnimatedBoardCanvas extends ImplicitlyAnimatedWidget {
   _AnimatedBoardCanvasState createState() => _AnimatedBoardCanvasState();
 }
 
-class _AnimatedBoardCanvasState extends AnimatedWidgetBaseState<AnimatedBoardCanvas> {
+class _AnimatedBoardCanvasState
+    extends AnimatedWidgetBaseState<AnimatedBoardCanvas> {
   Tween<BoardPainter> _board;
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
     _board = visitor(
       _board,
-      widget.board, (dynamic value) => BoardPainterTween(begin: widget.board),
+      widget.board,
+      (dynamic value) => BoardPainterTween(begin: widget.board),
     ) as Tween<BoardPainter>;
   }
 
