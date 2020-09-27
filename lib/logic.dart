@@ -81,6 +81,7 @@ List<Offset> getNeighbors(Offset from) => [
     ];
 
 class Cell {
+  Cell(this.cellState);
   CellState cellState;
 
   void convert() {
