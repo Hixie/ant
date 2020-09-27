@@ -74,10 +74,10 @@ class Board {
 }
 
 List<Offset> getNeighbors(Offset from) => [
+      Offset(from.dx, from.dy - 1),
       Offset(from.dx + 1, from.dy),
-      Offset(from.dx - 1, from.dy),
       Offset(from.dx, from.dy + 1),
-      Offset(from.dx, from.dy - 1)
+      Offset(from.dx - 1, from.dy),
     ];
 
 class Cell {
