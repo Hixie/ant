@@ -8,11 +8,19 @@ Board defaultBoard = Board(
       Cell(CellState.wall),
       Cell(CellState.wall),
       Cell(CellState.wall),
+      //new row
+      Cell(CellState.wall),
+      Cell(CellState.wall),
+      Cell(CellState.empty),
+      Cell(CellState.wall),
+      Cell(CellState.wall),
+      //new row
       Cell(CellState.wall),
       Cell(CellState.start),
       Cell(CellState.empty),
       Cell(CellState.goal),
       Cell(CellState.wall),
+      //new row
       Cell(CellState.wall),
       Cell(CellState.wall),
       Cell(CellState.wall),
@@ -20,4 +28,4 @@ Board defaultBoard = Board(
       Cell(CellState.wall),
     ],
     1,
-    1);
+    2);
