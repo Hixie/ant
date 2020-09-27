@@ -6,10 +6,10 @@ import 'logic.dart';
 import 'boards.dart' as boards;
 
 void main() {
-  Board board = boards.defaultBoard;
+  Board board = boards.bigBoard;
   runApp(MaterialApp(
     title: 'Tree Plate Ant',
-    home: BoardView(board: board),
+    home: Scaffold(body: SizedBox.expand(child: BoardView(board: board))),
   ));
 }
 
@@ -175,15 +175,38 @@ class _BoardViewState extends State<BoardView> {
     });
   }
 
+  static const List<Duration> modes = <Duration>[
+    const Duration(milliseconds: 1000),
+    const Duration(milliseconds: 750),
+    const Duration(milliseconds: 500),
+    const Duration(milliseconds: 250),
+    const Duration(milliseconds: 50),
+    const Duration(milliseconds: 5),
+    null,
+    const Duration(milliseconds: 2000),
+  ];
+
+  int _mode = 0;
   Timer _timer;
 
   void _toggle() {
-    if (_timer == null) {
-      _timer = Timer.periodic(const Duration(milliseconds: 750), _advance);
-    } else {
-      _timer.cancel();
+    _mode += 1;
+    if (_mode >= modes.length)
+      _mode = 0;
+    _timer?.cancel();
+    if (modes[_mode] == null) {
       _timer = null;
+      showMessage('Paused.');
+    } else {
+      _timer = Timer.periodic(modes[_mode], _advance);
+      showMessage('Ticking every ${modes[_mode].inMilliseconds}ms.');
     }
+  }
+
+  void showMessage(String message) {
+    scheduleMicrotask(() async {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(message)));
+    });
   }
 
   @override
@@ -203,13 +226,16 @@ class _BoardViewState extends State<BoardView> {
       child: GestureDetector(
         onTap: _toggle,
         child: FittedBox(
-          child: SizedBox(
-            width: widget.board.width.toDouble(),
-            height: widget.board.height.toDouble(),
-            child: AnimatedBoardCanvas(
-              duration: const Duration(milliseconds: 150),
-              curve: Curves.easeInQuint,
-              board: _currentPainter,
+          child: Padding(
+            padding: EdgeInsets.all(1.0),
+            child: SizedBox(
+              width: widget.board.width.toDouble(),
+              height: widget.board.height.toDouble(),
+              child: AnimatedBoardCanvas(
+                duration: (modes[_mode] ?? const Duration(milliseconds: 500)) * 0.75,
+                curve: Curves.easeInQuint,
+                board: _currentPainter,
+              ),
             ),
           ),
         ),
